@@ -1,0 +1,1185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proof of Concept-Data to Plain Language Clip Board</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --background: #ffffff;
+        --foreground: #171717;
+        --card: #fafafa;
+        --card-border: #e5e5e5;
+        --muted: #f5f5f5;
+        --muted-foreground: #737373;
+        --primary: #0066cc;
+        --primary-foreground: #ffffff;
+        --border: #e5e5e5;
+        --destructive: #dc2626;
+        --radius: 8px;
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 768px;
+        margin: 0 auto;
+        padding: 48px 16px;
+      }
+      @media (min-width: 768px) {
+        .container {
+          padding: 64px 24px;
+        }
+      }
+
+      header {
+        margin-bottom: 48px;
+      }
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .icon-wrapper {
+        padding: 8px;
+        border-radius: var(--radius);
+        background-color: rgba(0, 102, 204, 0.1);
+      }
+      .icon-wrapper svg {
+        width: 24px;
+        height: 24px;
+        color: var(--primary);
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: 600;
+      }
+      .subtitle {
+        color: var(--muted-foreground);
+        font-size: 14px;
+      }
+      @media (min-width: 768px) {
+        .subtitle {
+          font-size: 16px;
+        }
+      }
+
+      section {
+        margin-bottom: 48px;
+      }
+      .section-title {
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted-foreground);
+        margin-bottom: 24px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      @media (min-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      label {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      input {
+        height: 48px;
+        padding: 0 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 15px;
+        font-family: inherit;
+        background: var(--background);
+        color: var(--foreground);
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+      }
+      input::placeholder {
+        color: var(--muted-foreground);
+      }
+
+      .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+      @media (min-width: 768px) {
+        .form-actions {
+          flex-direction: row;
+        }
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 48px;
+        padding: 0 32px;
+        border-radius: var(--radius);
+        font-size: 15px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          background-color 0.15s,
+          opacity 0.15s;
+        border: none;
+      }
+      .btn svg {
+        width: 16px;
+        height: 16px;
+      }
+      .btn-primary {
+        background-color: var(--primary);
+        color: var(--primary-foreground);
+      }
+      .btn-primary:hover {
+        background-color: #0055aa;
+      }
+      .btn-outline {
+        background-color: transparent;
+        color: var(--foreground);
+        border: 1px solid var(--border);
+      }
+      .btn-outline:hover {
+        background-color: var(--muted);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn-full-mobile {
+        width: 100%;
+      }
+      @media (min-width: 768px) {
+        .btn-full-mobile {
+          width: auto;
+        }
+      }
+
+      .cite-toggle {
+        display: flex;
+        gap: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+      .cite-toggle button {
+        flex: 1;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
+        border: none;
+        background: var(--background);
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition:
+          background-color 0.15s,
+          color 0.15s;
+        white-space: nowrap;
+      }
+      .cite-toggle button:not(:last-child) {
+        border-right: 1px solid var(--border);
+      }
+      .cite-toggle button.active {
+        background-color: var(--primary);
+        color: var(--primary-foreground);
+      }
+
+      .output-card {
+        padding: 24px;
+        min-height: 200px;
+        background-color: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+      }
+      @media (min-width: 768px) {
+        .output-card {
+          padding: 32px;
+        }
+      }
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+        text-align: center;
+      }
+      .empty-icon {
+        padding: 12px;
+        border-radius: 50%;
+        background-color: var(--muted);
+        margin-bottom: 16px;
+      }
+      .empty-icon svg {
+        width: 32px;
+        height: 32px;
+        color: var(--muted-foreground);
+        opacity: 0.5;
+      }
+      .empty-text {
+        color: var(--muted-foreground);
+        font-size: 14px;
+      }
+
+      .statements-list {
+        list-style: disc;
+        padding-left: 24px;
+        margin-bottom: 24px;
+      }
+      .statements-list li {
+        margin-bottom: 12px;
+        line-height: 1.6;
+      }
+      .statement-content {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .statement-content sup {
+        font-size: 12px;
+        color: var(--primary);
+        font-weight: 500;
+        margin-left: 2px;
+      }
+      .in-text-cite {
+        color: var(--muted-foreground);
+        font-size: 14px;
+      }
+      .remove-btn {
+        visibility: hidden;
+        background: none;
+        border: none;
+        padding: 4px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: visibility 0s;
+      }
+      .statements-list li:hover .remove-btn {
+        visibility: visible;
+      }
+      .remove-btn:hover {
+        background-color: var(--muted);
+      }
+      .remove-btn svg {
+        width: 14px;
+        height: 14px;
+        color: var(--muted-foreground);
+      }
+      .remove-btn:hover svg {
+        color: var(--destructive);
+      }
+
+      .footnotes-section {
+        border-top: 1px solid var(--border);
+        padding-top: 24px;
+        margin-top: 24px;
+      }
+      .footnotes-title {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted-foreground);
+        margin-bottom: 16px;
+      }
+      .footnotes-list {
+        list-style: decimal;
+        padding-left: 24px;
+      }
+      .footnotes-list li {
+        font-size: 14px;
+        color: var(--muted-foreground);
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+
+      .graph-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        margin-bottom: 24px;
+        padding: 16px 0;
+      }
+      .graph-node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .graph-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        background-color: rgba(0, 102, 204, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+      .graph-label {
+        font-size: 11px;
+        color: var(--muted-foreground);
+        text-align: center;
+        max-width: 120px;
+        line-height: 1.3;
+        word-wrap: break-word;
+      }
+      .graph-edge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        min-width: 80px;
+        max-width: 200px;
+        position: relative;
+      }
+      .graph-line {
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary);
+        position: relative;
+      }
+      .graph-line::after {
+        content: "";
+        position: absolute;
+        right: -1px;
+        top: -4px;
+        border: 5px solid transparent;
+        border-left-color: var(--primary);
+      }
+      .graph-edge-label {
+        font-size: 11px;
+        color: var(--primary);
+        font-weight: 500;
+        margin-bottom: 6px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+      @media (min-width: 768px) {
+        .button-group {
+          flex-direction: row;
+        }
+      }
+
+      footer {
+        margin-top: 64px;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+      }
+      footer p {
+        font-size: 12px;
+        color: var(--muted-foreground);
+        text-align: center;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--foreground);
+        color: var(--background);
+        padding: 12px 20px;
+        border-radius: var(--radius);
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(100px);
+        opacity: 0;
+        transition:
+          transform 0.3s,
+          opacity 0.3s;
+        z-index: 1000;
+        max-width: 300px;
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast.error {
+        background: var(--destructive);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <div class="icon-wrapper">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </div>
+          <h1>Proof of Concept-Data to Plain Language Clip Board</h1>
+        </div>
+        <p class="subtitle">
+          Assemble statements with sources as bullet points. Export to MS Word
+          with proper footnotes.
+        </p>
+      </header>
+
+      <section>
+        <h2 class="section-title">Add New Statement</h2>
+        <form id="entryForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input
+                type="text"
+                id="subject"
+                placeholder="e.g., Amara Okafor"
+                required
+                data-testid="input-subject"
+              />
+            </div>
+            <div class="form-group">
+              <label for="predicate">Predicate</label>
+              <input
+                type="text"
+                id="predicate"
+                placeholder="e.g., is the former CEO of"
+                required
+                data-testid="input-predicate"
+              />
+            </div>
+            <div class="form-group">
+              <label for="object">Object</label>
+              <input
+                type="text"
+                id="object"
+                placeholder="e.g., Helios Dynamics"
+                required
+                data-testid="input-object"
+              />
+            </div>
+            <div class="form-group">
+              <label for="source">Source</label>
+              <input
+                type="text"
+                id="source"
+                placeholder="e.g., Bloomberg, Jan 2025"
+                required
+                data-testid="input-source"
+              />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-outline btn-full-mobile"
+              id="randomBtn"
+              data-testid="button-random"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 01-1.806-1.741 48.826 48.826 0 010-8.938A2 2 0 016.05 2.79l1.932.386a6 6 0 003.86-.517l.318-.158a6 6 0 013.86-.517l2.387.477a2 2 0 011.022.547M19.428 15.428a48.854 48.854 0 000-10.856M19.428 15.428l.163 1.036a2 2 0 01-1.022 2.107l-.373.186a48.89 48.89 0 01-5.577 2.267"
+                />
+              </svg>
+              Random fill
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary btn-full-mobile"
+              data-testid="button-add"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add to text
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section>
+        <h2 class="section-title">Output Preview</h2>
+        <div class="cite-toggle" id="citeToggle" data-testid="toggle-citation">
+          <button
+            class="active"
+            data-mode="none"
+            data-testid="button-cite-none"
+          >
+            No Cite
+          </button>
+          <button data-mode="inline" data-testid="button-cite-inline">
+            In-Text Cite
+          </button>
+          <button data-mode="footnote" data-testid="button-cite-footnote">
+            Footnote Cite
+          </button>
+          <button data-mode="graph" data-testid="button-cite-graph">
+            Graph
+          </button>
+        </div>
+        <div class="output-card" id="outputCard">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <p class="empty-text">
+              No statements yet. Add your first statement above.
+            </p>
+          </div>
+          <div id="contentArea" style="display: none">
+            <div id="statementsArea">
+              <ul class="statements-list" id="statementsList"></ul>
+              <div class="footnotes-section" id="footnotesSection">
+                <h3 class="footnotes-title">Footnotes</h3>
+                <ol class="footnotes-list" id="footnotesList"></ol>
+              </div>
+            </div>
+            <div id="graphViewArea" style="display: none">
+              <div id="graphArea"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="button-group">
+        <button
+          class="btn btn-outline btn-full-mobile"
+          id="copyBtn"
+          disabled
+          data-testid="button-copy"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+            />
+          </svg>
+          Copy as Plain Text
+        </button>
+        <button
+          class="btn btn-primary btn-full-mobile"
+          id="downloadBtn"
+          disabled
+          data-testid="button-download"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          Download RTF (MS Word)
+        </button>
+        <button
+          class="btn btn-outline btn-full-mobile"
+          id="csvSingleBtn"
+          disabled
+          data-testid="button-csv-single"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 10h18M3 14h18M9 4v16M15 4v16"
+            />
+          </svg>
+          CSV (Single Table)
+        </button>
+        <button
+          class="btn btn-outline btn-full-mobile"
+          id="csvNodeEdgeBtn"
+          disabled
+          data-testid="button-csv-nodeedge"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485"
+            />
+          </svg>
+          CSV (Node/Edge)
+        </button>
+      </div>
+
+      <footer>
+        <p>
+          Tip: Download the RTF file and open it in Microsoft Word to see
+          properly formatted bullet points with footnotes at the bottom of the
+          page.
+        </p>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      let entries = [];
+      let citeMode = "none";
+
+      const form = document.getElementById("entryForm");
+      const emptyState = document.getElementById("emptyState");
+      const contentArea = document.getElementById("contentArea");
+      const statementsArea = document.getElementById("statementsArea");
+      const graphViewArea = document.getElementById("graphViewArea");
+      const statementsList = document.getElementById("statementsList");
+      const footnotesList = document.getElementById("footnotesList");
+      const footnotesSection = document.getElementById("footnotesSection");
+      const graphArea = document.getElementById("graphArea");
+      const copyBtn = document.getElementById("copyBtn");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const csvSingleBtn = document.getElementById("csvSingleBtn");
+      const csvNodeEdgeBtn = document.getElementById("csvNodeEdgeBtn");
+      const randomBtn = document.getElementById("randomBtn");
+      const citeToggle = document.getElementById("citeToggle");
+      const toastEl = document.getElementById("toast");
+
+      const subjects = [
+        "Amara Okafor",
+        "James Whitfield",
+        "Mei-Lin Chen",
+        "Carlos Gutierrez",
+        "Priya Sharma",
+        "Fatima Al-Rashid",
+        "Kenji Tanaka",
+        "Sarah Lindstr\u00f6m",
+        "Dmitri Volkov",
+        "Aisha Johnson",
+      ];
+      const predicates = [
+        "is the former CEO of",
+        "is on the board of",
+        "founded",
+        "is the lead counsel for",
+        "is the chief technology officer of",
+        "is a major investor in",
+        "serves as chair of",
+        "is the managing director of",
+        "advises",
+        "was recently appointed to lead",
+      ];
+      const objects = [
+        "Helios Dynamics",
+        "Vantage Bioworks",
+        "Crescent & Vale",
+        "NovaTerre Systems",
+        "Pinecrest Analytics",
+        "Ironlake Capital",
+        "Sable Meridian Group",
+        "Axiom Cybernetics",
+        "Windrow Logistics",
+        "Coralstone Energy",
+      ];
+      const sources = [
+        "Bloomberg, Jan 2025",
+        "Financial Times, Mar 2024",
+        "Reuters Corporate Filing, 2024",
+        "SEC Form 8-K, Feb 2025",
+        "Wall Street Journal, Nov 2024",
+        "Forbes Global 500, 2024",
+        "TechCrunch, Aug 2024",
+        "Harvard Business Review, 2024",
+        "The Economist, Dec 2024",
+        "Annual Report, FY2024",
+      ];
+
+      function pickRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function escapeRtf(text) {
+        return text
+          .replace(/\\/g, "\\\\")
+          .replace(/\{/g, "\\{")
+          .replace(/\}/g, "\\}");
+      }
+
+      function showToast(message, isError) {
+        toastEl.textContent = message;
+        toastEl.className = "toast show" + (isError ? " error" : "");
+        setTimeout(function () {
+          toastEl.className = "toast";
+        }, 3000);
+      }
+
+      citeToggle.addEventListener("click", function (e) {
+        var btn = e.target.closest("button");
+        if (!btn) return;
+        citeMode = btn.getAttribute("data-mode");
+        citeToggle.querySelectorAll("button").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        btn.classList.add("active");
+        renderOutput();
+      });
+
+      function renderOutput() {
+        if (entries.length === 0) {
+          emptyState.style.display = "flex";
+          contentArea.style.display = "none";
+          copyBtn.disabled = true;
+          downloadBtn.disabled = true;
+          csvSingleBtn.disabled = true;
+          csvNodeEdgeBtn.disabled = true;
+          return;
+        }
+
+        emptyState.style.display = "none";
+        contentArea.style.display = "block";
+        copyBtn.disabled = citeMode === "graph";
+        downloadBtn.disabled = citeMode === "graph";
+        csvSingleBtn.disabled = false;
+        csvNodeEdgeBtn.disabled = false;
+
+        if (citeMode === "graph") {
+          statementsArea.style.display = "none";
+          graphViewArea.style.display = "block";
+        } else {
+          statementsArea.style.display = "block";
+          graphViewArea.style.display = "none";
+        }
+
+        statementsList.innerHTML = "";
+        entries.forEach(function (entry, index) {
+          var li = document.createElement("li");
+          var span = document.createElement("span");
+          span.className = "statement-content";
+
+          var textSpan = document.createElement("span");
+          textSpan.textContent =
+            entry.subject + " " + entry.predicate + " " + entry.object;
+
+          if (citeMode === "footnote") {
+            var sup = document.createElement("sup");
+            sup.textContent = index + 1;
+            textSpan.appendChild(sup);
+          } else if (citeMode === "inline") {
+            var cite = document.createElement("span");
+            cite.className = "in-text-cite";
+            cite.textContent = " (" + entry.source + ")";
+            textSpan.appendChild(cite);
+          }
+
+          var removeBtn = document.createElement("button");
+          removeBtn.className = "remove-btn";
+          removeBtn.setAttribute("aria-label", "Remove statement");
+          removeBtn.setAttribute("data-testid", "button-remove-" + index);
+          removeBtn.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>';
+          removeBtn.addEventListener("click", function () {
+            removeEntry(index);
+          });
+
+          span.appendChild(textSpan);
+          span.appendChild(removeBtn);
+          li.appendChild(span);
+          statementsList.appendChild(li);
+        });
+
+        if (citeMode === "footnote") {
+          footnotesSection.style.display = "block";
+          footnotesList.innerHTML = "";
+          entries.forEach(function (entry) {
+            var li = document.createElement("li");
+            li.textContent = entry.source;
+            footnotesList.appendChild(li);
+          });
+        } else {
+          footnotesSection.style.display = "none";
+        }
+
+        graphArea.innerHTML = "";
+        entries.forEach(function (entry, index) {
+          var row = document.createElement("div");
+          row.className = "graph-row";
+          row.setAttribute("data-testid", "graph-row-" + index);
+
+          var leftNode = document.createElement("div");
+          leftNode.className = "graph-node";
+          var leftCircle = document.createElement("div");
+          leftCircle.className = "graph-circle";
+          leftCircle.textContent = "S";
+          var leftLabel = document.createElement("div");
+          leftLabel.className = "graph-label";
+          leftLabel.textContent = entry.subject;
+          leftNode.appendChild(leftCircle);
+          leftNode.appendChild(leftLabel);
+
+          var edge = document.createElement("div");
+          edge.className = "graph-edge";
+          var edgeLabel = document.createElement("div");
+          edgeLabel.className = "graph-edge-label";
+          edgeLabel.textContent = entry.predicate;
+          var line = document.createElement("div");
+          line.className = "graph-line";
+          edge.appendChild(edgeLabel);
+          edge.appendChild(line);
+
+          var rightNode = document.createElement("div");
+          rightNode.className = "graph-node";
+          var rightCircle = document.createElement("div");
+          rightCircle.className = "graph-circle";
+          rightCircle.textContent = "O";
+          var rightLabel = document.createElement("div");
+          rightLabel.className = "graph-label";
+          rightLabel.textContent = entry.object;
+          rightNode.appendChild(rightCircle);
+          rightNode.appendChild(rightLabel);
+
+          row.appendChild(leftNode);
+          row.appendChild(edge);
+          row.appendChild(rightNode);
+          graphArea.appendChild(row);
+        });
+      }
+
+      function removeEntry(index) {
+        entries.splice(index, 1);
+        renderOutput();
+        showToast("Entry removed");
+      }
+
+      randomBtn.addEventListener("click", function () {
+        document.getElementById("subject").value = pickRandom(subjects);
+        document.getElementById("predicate").value = pickRandom(predicates);
+        document.getElementById("object").value = pickRandom(objects);
+        document.getElementById("source").value = pickRandom(sources);
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var subject = document.getElementById("subject").value.trim();
+        var predicate = document.getElementById("predicate").value.trim();
+        var object = document.getElementById("object").value.trim();
+        var source = document.getElementById("source").value.trim();
+
+        if (!subject || !predicate || !object || !source) {
+          showToast("Please fill all fields", true);
+          return;
+        }
+
+        entries.push({
+          subject: subject,
+          predicate: predicate,
+          object: object,
+          source: source,
+        });
+        form.reset();
+        renderOutput();
+        showToast("Entry added");
+      });
+
+      function generateRTF() {
+        var rtfContent = "{\\rtf1\\ansi\\ansicpg1252\\deff0\n";
+        rtfContent += "{\\fonttbl{\\f0\\fnil\\fcharset0 Arial;}}\n";
+        rtfContent += "\\pard\\f0\\fs22\n";
+
+        entries.forEach(function (entry) {
+          var statement =
+            escapeRtf(entry.subject) +
+            " " +
+            escapeRtf(entry.predicate) +
+            " " +
+            escapeRtf(entry.object);
+          var safeSource = escapeRtf(entry.source);
+          rtfContent +=
+            "{\\pntext\\f0 \\bullet\\tab}{\\*\\pn\\pnlvlblt\\pnf0\\pnindent0{\\pntxtb \\bullet}}\\fi-360\\li720\n";
+
+          if (citeMode === "footnote") {
+            rtfContent +=
+              statement +
+              "{\\super\\chftn}{\\footnote\\pard\\plain\\fs20 {\\super\\chftn} " +
+              safeSource +
+              "\\par}\\par\n";
+          } else if (citeMode === "inline") {
+            rtfContent += statement + " (" + safeSource + ")\\par\n";
+          } else {
+            rtfContent += statement + "\\par\n";
+          }
+        });
+
+        rtfContent += "}";
+        return rtfContent;
+      }
+
+      downloadBtn.addEventListener("click", function () {
+        if (entries.length === 0) {
+          showToast("No content to download", true);
+          return;
+        }
+        downloadFile(
+          generateRTF(),
+          "statements-with-footnotes.rtf",
+          "application/rtf",
+        );
+        showToast("RTF file downloaded");
+      });
+
+      function escapeCsv(value) {
+        var str = String(value);
+        if (
+          str.indexOf('"') !== -1 ||
+          str.indexOf(",") !== -1 ||
+          str.indexOf("\n") !== -1
+        ) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      }
+
+      function downloadFile(content, filename, mimeType) {
+        var blob = new Blob([content], { type: mimeType });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      csvSingleBtn.addEventListener("click", function () {
+        if (entries.length === 0) {
+          showToast("No content to export", true);
+          return;
+        }
+        var rows = ["Subject,Predicate,Object,Source"];
+        entries.forEach(function (e) {
+          rows.push(
+            escapeCsv(e.subject) +
+              "," +
+              escapeCsv(e.predicate) +
+              "," +
+              escapeCsv(e.object) +
+              "," +
+              escapeCsv(e.source),
+          );
+        });
+        downloadFile(
+          rows.join("\n"),
+          "statements-single-table.csv",
+          "text/csv",
+        );
+        showToast("CSV (Single Table) downloaded");
+      });
+
+      csvNodeEdgeBtn.addEventListener("click", function () {
+        if (entries.length === 0) {
+          showToast("No content to export", true);
+          return;
+        }
+        var nodeMap = {};
+        var nodeId = 1;
+        entries.forEach(function (e) {
+          if (!nodeMap[e.subject]) {
+            nodeMap[e.subject] = nodeId++;
+          }
+          if (!nodeMap[e.object]) {
+            nodeMap[e.object] = nodeId++;
+          }
+        });
+
+        var lines = ["--- Nodes ---"];
+        lines.push("NodeID,Label");
+        Object.keys(nodeMap).forEach(function (label) {
+          lines.push(nodeMap[label] + "," + escapeCsv(label));
+        });
+
+        lines.push("");
+        lines.push("--- Edges ---");
+        lines.push("SourceNodeID,TargetNodeID,Predicate");
+        entries.forEach(function (e) {
+          lines.push(
+            nodeMap[e.subject] +
+              "," +
+              nodeMap[e.object] +
+              "," +
+              escapeCsv(e.predicate),
+          );
+        });
+
+        downloadFile(lines.join("\n"), "statements-node-edge.csv", "text/csv");
+        showToast("CSV (Node/Edge) downloaded");
+      });
+
+      copyBtn.addEventListener("click", function () {
+        if (entries.length === 0) {
+          showToast("No content to copy", true);
+          return;
+        }
+
+        var plainText;
+        if (citeMode === "footnote") {
+          plainText =
+            entries
+              .map(function (e, i) {
+                return (
+                  "\u2022 " +
+                  e.subject +
+                  " " +
+                  e.predicate +
+                  " " +
+                  e.object +
+                  " [" +
+                  (i + 1) +
+                  "]"
+                );
+              })
+              .join("\n") +
+            "\n\n" +
+            entries
+              .map(function (e, i) {
+                return i + 1 + ". " + e.source;
+              })
+              .join("\n");
+        } else if (citeMode === "inline") {
+          plainText = entries
+            .map(function (e) {
+              return (
+                "\u2022 " +
+                e.subject +
+                " " +
+                e.predicate +
+                " " +
+                e.object +
+                " (" +
+                e.source +
+                ")"
+              );
+            })
+            .join("\n");
+        } else {
+          plainText = entries
+            .map(function (e) {
+              return "\u2022 " + e.subject + " " + e.predicate + " " + e.object;
+            })
+            .join("\n");
+        }
+
+        navigator.clipboard
+          .writeText(plainText)
+          .then(function () {
+            showToast("Copied to clipboard");
+          })
+          .catch(function () {
+            showToast("Copy failed. Please try again.", true);
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Proof of Concept-Data to Plain Language Clip Board</title>
+    <title>Data to Plain Language Clipboard</title>
     <style>
       *,
       *::before,
@@ -190,11 +190,6 @@
       .btn-full-mobile {
         width: 100%;
       }
-      @media (min-width: 768px) {
-        .btn-full-mobile {
-          width: auto;
-        }
-      }
 
       .cite-toggle {
         display: flex;
@@ -225,6 +220,44 @@
       .cite-toggle button.active {
         background-color: var(--primary);
         color: var(--primary-foreground);
+      }
+
+      .section-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      @media (min-width: 768px) {
+        .section-actions {
+          flex-direction: row;
+        }
+      }
+      .section-actions .btn {
+        flex: 1;
+      }
+      .form-fields-collapsible {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.2s ease;
+      }
+      .form-fields-collapsible.expanded {
+        max-height: 500px;
+        opacity: 1;
+      }
+      .section-collapsible {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height 0.4s ease, opacity 0.25s ease, visibility 0s 0.4s;
+      }
+      .section-collapsible.expanded {
+        max-height: 1000px;
+        opacity: 1;
+        visibility: visible;
+        transition: max-height 0.4s ease, opacity 0.25s ease, visibility 0s 0s;
       }
 
       .output-card {
@@ -405,15 +438,74 @@
         white-space: nowrap;
       }
 
-      .button-group {
+      .input-preview-card {
+        padding: 24px;
+        background-color: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        margin-bottom: 16px;
+      }
+      @media (min-width: 768px) {
+        .input-preview-card {
+          padding: 32px;
+        }
+      }
+      .input-preview-empty {
         display: flex;
-        flex-direction: column;
-        gap: 12px;
-        justify-content: flex-end;
+        align-items: center;
+        justify-content: center;
+        min-height: 80px;
+        color: var(--muted-foreground);
+        font-size: 14px;
+      }
+      .input-table-wrap {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .input-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .input-table th {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted-foreground);
+        text-align: left;
+        padding: 0 12px 8px 12px;
+      }
+      .input-table td {
+        padding: 10px 12px;
+        font-size: 15px;
+        border-top: 1px solid var(--border);
+      }
+      .input-table-source {
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--muted-foreground);
+      }
+      .input-table-source strong {
+        font-weight: 600;
+      }
+      .input-graph-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 16px 0;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      .button-group {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
       }
       @media (min-width: 768px) {
         .button-group {
-          flex-direction: row;
+          grid-template-columns: repeat(3, 1fr);
         }
       }
 
@@ -474,63 +566,42 @@
               />
             </svg>
           </div>
-          <h1>Proof of Concept-Data to Plain Language Clip Board</h1>
+          <h1>Data to Plain Language Clipboard</h1>
         </div>
         <p class="subtitle">
-          Assemble statements with sources as bullet points. Export to MS Word
-          with proper footnotes.
+          Turn structured data into plain-language statements with sources.
+          Export as RTF, CSV, or PROV-O JSON-LD.
         </p>
       </header>
 
       <section>
         <h2 class="section-title">Add New Statement</h2>
         <form id="entryForm">
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="subject">Subject</label>
-              <input
-                type="text"
-                id="subject"
-                placeholder="e.g., Amara Okafor"
-                required
-                data-testid="input-subject"
-              />
-            </div>
-            <div class="form-group">
-              <label for="predicate">Predicate</label>
-              <input
-                type="text"
-                id="predicate"
-                placeholder="e.g., is the former CEO of"
-                required
-                data-testid="input-predicate"
-              />
-            </div>
-            <div class="form-group">
-              <label for="object">Object</label>
-              <input
-                type="text"
-                id="object"
-                placeholder="e.g., Helios Dynamics"
-                required
-                data-testid="input-object"
-              />
-            </div>
-            <div class="form-group">
-              <label for="source">Source</label>
-              <input
-                type="text"
-                id="source"
-                placeholder="e.g., Bloomberg, Jan 2025"
-                required
-                data-testid="input-source"
-              />
-            </div>
-          </div>
-          <div class="form-actions">
+          <div class="section-actions">
             <button
               type="button"
-              class="btn btn-outline btn-full-mobile"
+              class="btn btn-primary"
+              id="fillAndClipBtn"
+              data-testid="button-fill-and-clip"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              Fill and Clip
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline"
               id="randomBtn"
               data-testid="button-random"
             >
@@ -547,12 +618,13 @@
                   d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 01-1.806-1.741 48.826 48.826 0 010-8.938A2 2 0 016.05 2.79l1.932.386a6 6 0 003.86-.517l.318-.158a6 6 0 013.86-.517l2.387.477a2 2 0 011.022.547M19.428 15.428a48.854 48.854 0 000-10.856M19.428 15.428l.163 1.036a2 2 0 01-1.022 2.107l-.373.186a48.89 48.89 0 01-5.577 2.267"
                 />
               </svg>
-              Random fill
+              Fill and Display
             </button>
             <button
-              type="submit"
-              class="btn btn-primary btn-full-mobile"
-              data-testid="button-add"
+              type="button"
+              class="btn btn-outline"
+              id="manualEntryBtn"
+              data-testid="button-manual-entry"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -564,13 +636,122 @@
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  d="M12 4v16m8-8H4"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                 />
               </svg>
-              Add to text
+              Manually Enter
             </button>
           </div>
+          <div class="form-fields-collapsible" id="formFieldsCollapsible">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input
+                  type="text"
+                  id="subject"
+                  placeholder="e.g., Amara Okafor"
+                  required
+                  data-testid="input-subject"
+                />
+              </div>
+              <div class="form-group">
+                <label for="predicate">Predicate</label>
+                <input
+                  type="text"
+                  id="predicate"
+                  placeholder="e.g., is the former CEO of"
+                  required
+                  data-testid="input-predicate"
+                />
+              </div>
+              <div class="form-group">
+                <label for="object">Object</label>
+                <input
+                  type="text"
+                  id="object"
+                  placeholder="e.g., Helios Dynamics"
+                  required
+                  data-testid="input-object"
+                />
+              </div>
+              <div class="form-group">
+                <label for="source">Source</label>
+                <input
+                  type="text"
+                  id="source"
+                  placeholder="e.g., Bloomberg, Jan 2025"
+                  required
+                  data-testid="input-source"
+                />
+              </div>
+            </div>
+          </div>
         </form>
+      </section>
+
+      <section>
+        <h2 class="section-title">Existing Display</h2>
+        <div class="section-collapsible" id="existingDisplayCollapsible">
+          <div class="cite-toggle" id="inputPreviewToggle" data-testid="toggle-input-preview">
+            <button class="active" data-mode="table" data-testid="button-input-table">
+              Table
+            </button>
+            <button data-mode="graph" data-testid="button-input-graph">
+              Graph
+            </button>
+          </div>
+          <div class="input-preview-card" id="inputPreviewCard">
+            <div class="input-preview-empty" id="inputPreviewEmpty">
+              Use Random Fill or Manually Enter to add data.
+            </div>
+            <div id="inputTableView" style="display: none">
+              <div class="input-table-wrap" oncontextmenu="return false" data-testid="input-table-wrap">
+                <table class="input-table" data-testid="input-table">
+                  <thead>
+                    <tr>
+                      <th>Subject</th>
+                      <th>Relationship</th>
+                      <th>Object</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td id="previewSubjectCell"></td>
+                      <td id="previewPredicateCell"></td>
+                      <td id="previewObjectCell"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="input-table-source" id="previewSourceRow"></div>
+              </div>
+            </div>
+            <div id="inputGraphView" style="display: none">
+              <div class="input-graph-preview" id="inputGraphArea" data-testid="input-graph-area"></div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="addToClipboardBtn"
+            style="width: 100%"
+            data-testid="button-add-clipboard"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Add to Clipboard
+          </button>
+        </div>
       </section>
 
       <section>
@@ -714,13 +895,33 @@
           </svg>
           CSV (Node/Edge)
         </button>
+        <button
+          class="btn btn-outline btn-full-mobile"
+          id="provBtn"
+          disabled
+          data-testid="button-prov"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          PROV-O JSON-LD
+        </button>
       </div>
 
       <footer>
         <p>
-          Tip: Download the RTF file and open it in Microsoft Word to see
-          properly formatted bullet points with footnotes at the bottom of the
-          page.
+          Tip: RTF opens in Microsoft Word with proper footnotes. PROV-O
+          JSON-LD follows the W3C provenance standard for linked data.
         </p>
       </footer>
     </div>
@@ -730,6 +931,9 @@
     <script>
       let entries = [];
       let citeMode = "none";
+      let inputPreviewMode = "table";
+      let manualExpanded = false;
+      let section2Expanded = false;
 
       const form = document.getElementById("entryForm");
       const emptyState = document.getElementById("emptyState");
@@ -744,9 +948,29 @@
       const downloadBtn = document.getElementById("downloadBtn");
       const csvSingleBtn = document.getElementById("csvSingleBtn");
       const csvNodeEdgeBtn = document.getElementById("csvNodeEdgeBtn");
+      const provBtn = document.getElementById("provBtn");
+      const fillAndClipBtn = document.getElementById("fillAndClipBtn");
       const randomBtn = document.getElementById("randomBtn");
+      const manualEntryBtn = document.getElementById("manualEntryBtn");
+      const addToClipboardBtn = document.getElementById("addToClipboardBtn");
+      const formFieldsCollapsible = document.getElementById("formFieldsCollapsible");
+      const existingDisplayCollapsible = document.getElementById("existingDisplayCollapsible");
       const citeToggle = document.getElementById("citeToggle");
       const toastEl = document.getElementById("toast");
+
+      const inputPreviewToggle = document.getElementById("inputPreviewToggle");
+      const inputPreviewEmpty = document.getElementById("inputPreviewEmpty");
+      const inputTableView = document.getElementById("inputTableView");
+      const inputGraphView = document.getElementById("inputGraphView");
+      const inputGraphArea = document.getElementById("inputGraphArea");
+      const previewSubjectCell = document.getElementById("previewSubjectCell");
+      const previewPredicateCell = document.getElementById("previewPredicateCell");
+      const previewObjectCell = document.getElementById("previewObjectCell");
+      const previewSourceRow = document.getElementById("previewSourceRow");
+      const subjectInput = document.getElementById("subject");
+      const predicateInput = document.getElementById("predicate");
+      const objectInput = document.getElementById("object");
+      const sourceInput = document.getElementById("source");
 
       const subjects = [
         "Amara Okafor",
@@ -760,18 +984,22 @@
         "Dmitri Volkov",
         "Aisha Johnson",
       ];
-      const predicates = [
-        "is the former CEO of",
-        "is on the board of",
-        "founded",
-        "is the lead counsel for",
-        "is the chief technology officer of",
-        "is a major investor in",
-        "serves as chair of",
-        "is the managing director of",
-        "advises",
-        "was recently appointed to lead",
+      const relationships = [
+        { code: "FORMER_CEO", predicate: "is the former CEO of" },
+        { code: "BOARDMEMBER", predicate: "is on the board of" },
+        { code: "FOUNDER", predicate: "founded" },
+        { code: "LEAD_COUNSEL", predicate: "is the lead counsel for" },
+        { code: "CTO", predicate: "is the chief technology officer of" },
+        { code: "INVESTOR", predicate: "is a major investor in" },
+        { code: "CHAIRPERSON", predicate: "serves as chair of" },
+        { code: "MANAGING_DIRECTOR", predicate: "is the managing director of" },
+        { code: "ADVISOR", predicate: "advises" },
+        { code: "NEW_LEADER", predicate: "was recently appointed to lead" },
       ];
+      const predicateToCode = {};
+      relationships.forEach(function (r) {
+        predicateToCode[r.predicate] = r.code;
+      });
       const objects = [
         "Helios Dynamics",
         "Vantage Bioworks",
@@ -827,6 +1055,111 @@
         renderOutput();
       });
 
+      function expandSection2() {
+        if (!section2Expanded) {
+          section2Expanded = true;
+          existingDisplayCollapsible.classList.add("expanded");
+        }
+      }
+
+      manualEntryBtn.addEventListener("click", function () {
+        manualExpanded = !manualExpanded;
+        if (manualExpanded) {
+          formFieldsCollapsible.classList.add("expanded");
+          expandSection2();
+        } else {
+          formFieldsCollapsible.classList.remove("expanded");
+        }
+      });
+
+      inputPreviewToggle.addEventListener("click", function (e) {
+        var btn = e.target.closest("button");
+        if (!btn) return;
+        inputPreviewMode = btn.getAttribute("data-mode");
+        inputPreviewToggle.querySelectorAll("button").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        btn.classList.add("active");
+        renderInputPreview();
+      });
+
+      function renderInputPreview() {
+        var s = subjectInput.value.trim();
+        var p = predicateInput.value.trim();
+        var o = objectInput.value.trim();
+        var src = sourceInput.value.trim();
+        var hasContent = s || p || o || src;
+
+        if (!hasContent) {
+          inputPreviewEmpty.style.display = "flex";
+          inputTableView.style.display = "none";
+          inputGraphView.style.display = "none";
+          return;
+        }
+
+        inputPreviewEmpty.style.display = "none";
+
+        if (inputPreviewMode === "table") {
+          inputTableView.style.display = "block";
+          inputGraphView.style.display = "none";
+
+          previewSubjectCell.textContent = s || "\u2014";
+          previewPredicateCell.textContent = (p && predicateToCode[p]) ? predicateToCode[p] : (p || "\u2014");
+          previewObjectCell.textContent = o || "\u2014";
+
+          previewSourceRow.innerHTML = "";
+          var strong = document.createElement("strong");
+          strong.textContent = "Source: ";
+          previewSourceRow.appendChild(strong);
+          previewSourceRow.appendChild(document.createTextNode(src || "\u2014"));
+        } else {
+          inputTableView.style.display = "none";
+          inputGraphView.style.display = "block";
+
+          inputGraphArea.innerHTML = "";
+
+          var leftNode = document.createElement("div");
+          leftNode.className = "graph-node";
+          var leftCircle = document.createElement("div");
+          leftCircle.className = "graph-circle";
+          leftCircle.textContent = "S";
+          var leftLabel = document.createElement("div");
+          leftLabel.className = "graph-label";
+          leftLabel.textContent = s || "\u2014";
+          leftNode.appendChild(leftCircle);
+          leftNode.appendChild(leftLabel);
+
+          var edge = document.createElement("div");
+          edge.className = "graph-edge";
+          var edgeLabel = document.createElement("div");
+          edgeLabel.className = "graph-edge-label";
+          edgeLabel.textContent = (p && predicateToCode[p]) ? predicateToCode[p] : (p || "\u2014");
+          var line = document.createElement("div");
+          line.className = "graph-line";
+          edge.appendChild(edgeLabel);
+          edge.appendChild(line);
+
+          var rightNode = document.createElement("div");
+          rightNode.className = "graph-node";
+          var rightCircle = document.createElement("div");
+          rightCircle.className = "graph-circle";
+          rightCircle.textContent = "O";
+          var rightLabel = document.createElement("div");
+          rightLabel.className = "graph-label";
+          rightLabel.textContent = o || "\u2014";
+          rightNode.appendChild(rightCircle);
+          rightNode.appendChild(rightLabel);
+
+          inputGraphArea.appendChild(leftNode);
+          inputGraphArea.appendChild(edge);
+          inputGraphArea.appendChild(rightNode);
+        }
+      }
+
+      [subjectInput, predicateInput, objectInput, sourceInput].forEach(function (el) {
+        el.addEventListener("input", renderInputPreview);
+      });
+
       function renderOutput() {
         if (entries.length === 0) {
           emptyState.style.display = "flex";
@@ -835,6 +1168,7 @@
           downloadBtn.disabled = true;
           csvSingleBtn.disabled = true;
           csvNodeEdgeBtn.disabled = true;
+          provBtn.disabled = true;
           return;
         }
 
@@ -844,6 +1178,7 @@
         downloadBtn.disabled = citeMode === "graph";
         csvSingleBtn.disabled = false;
         csvNodeEdgeBtn.disabled = false;
+        provBtn.disabled = false;
 
         if (citeMode === "graph") {
           statementsArea.style.display = "none";
@@ -923,7 +1258,7 @@
           edge.className = "graph-edge";
           var edgeLabel = document.createElement("div");
           edgeLabel.className = "graph-edge-label";
-          edgeLabel.textContent = entry.predicate;
+          edgeLabel.textContent = predicateToCode[entry.predicate] || entry.predicate;
           var line = document.createElement("div");
           line.className = "graph-line";
           edge.appendChild(edgeLabel);
@@ -953,21 +1288,53 @@
         showToast("Entry removed");
       }
 
-      randomBtn.addEventListener("click", function () {
-        document.getElementById("subject").value = pickRandom(subjects);
-        document.getElementById("predicate").value = pickRandom(predicates);
-        document.getElementById("object").value = pickRandom(objects);
-        document.getElementById("source").value = pickRandom(sources);
+      fillAndClipBtn.addEventListener("click", function () {
+        var rel = pickRandom(relationships);
+        var subject = pickRandom(subjects);
+        var predicate = rel.predicate;
+        var object = pickRandom(objects);
+        var source = pickRandom(sources);
+        entries.push({
+          subject: subject,
+          predicate: predicate,
+          object: object,
+          source: source,
+        });
+        if (manualExpanded) {
+          manualExpanded = false;
+          formFieldsCollapsible.classList.remove("expanded");
+        }
+        if (section2Expanded) {
+          section2Expanded = false;
+          existingDisplayCollapsible.classList.remove("expanded");
+        }
+        form.reset();
+        renderInputPreview();
+        renderOutput();
+        showToast("Entry added");
       });
 
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var subject = document.getElementById("subject").value.trim();
-        var predicate = document.getElementById("predicate").value.trim();
-        var object = document.getElementById("object").value.trim();
-        var source = document.getElementById("source").value.trim();
+      randomBtn.addEventListener("click", function () {
+        var rel = pickRandom(relationships);
+        subjectInput.value = pickRandom(subjects);
+        predicateInput.value = rel.predicate;
+        objectInput.value = pickRandom(objects);
+        sourceInput.value = pickRandom(sources);
+        expandSection2();
+        renderInputPreview();
+      });
+
+      addToClipboardBtn.addEventListener("click", function () {
+        var subject = subjectInput.value.trim();
+        var predicate = predicateInput.value.trim();
+        var object = objectInput.value.trim();
+        var source = sourceInput.value.trim();
 
         if (!subject || !predicate || !object || !source) {
+          if (!manualExpanded) {
+            manualExpanded = true;
+            formFieldsCollapsible.classList.add("expanded");
+          }
           showToast("Please fill all fields", true);
           return;
         }
@@ -979,8 +1346,14 @@
           source: source,
         });
         form.reset();
+        renderInputPreview();
         renderOutput();
         showToast("Entry added");
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        addToClipboardBtn.click();
       });
 
       function generateRTF() {
@@ -1058,7 +1431,7 @@
           showToast("No content to export", true);
           return;
         }
-        var rows = ["Subject,Predicate,Object,Source"];
+        var rows = ["Subject,Relationship,Object,Source"];
         entries.forEach(function (e) {
           rows.push(
             escapeCsv(e.subject) +
@@ -1102,7 +1475,7 @@
 
         lines.push("");
         lines.push("--- Edges ---");
-        lines.push("SourceNodeID,TargetNodeID,Predicate");
+        lines.push("SourceNodeID,TargetNodeID,Relationship");
         entries.forEach(function (e) {
           lines.push(
             nodeMap[e.subject] +
@@ -1179,6 +1552,40 @@
           .catch(function () {
             showToast("Copy failed. Please try again.", true);
           });
+      });
+
+      provBtn.addEventListener("click", function () {
+        if (entries.length === 0) {
+          showToast("No content to export", true);
+          return;
+        }
+
+        var provDoc = {
+          "@context": {
+            prov: "http://www.w3.org/ns/prov#",
+            rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+            xsd: "http://www.w3.org/2001/XMLSchema#",
+          },
+          "@graph": entries.map(function (e, i) {
+            var statementId = "_:statement" + (i + 1);
+            var sourceId = "_:source" + (i + 1);
+            return {
+              "@id": statementId,
+              "@type": "prov:Entity",
+              "rdfs:label":
+                e.subject + " " + e.predicate + " " + e.object,
+              "prov:wasDerivedFrom": {
+                "@id": sourceId,
+                "@type": "prov:Entity",
+                "rdfs:label": e.source,
+              },
+            };
+          }),
+        };
+
+        var json = JSON.stringify(provDoc, null, 2);
+        downloadFile(json, "statements.jsonld", "application/ld+json");
+        showToast("PROV-O JSON-LD downloaded");
       });
     </script>
   </body>

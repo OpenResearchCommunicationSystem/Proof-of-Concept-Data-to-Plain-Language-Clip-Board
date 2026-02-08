@@ -545,6 +545,187 @@
       .toast.error {
         background: var(--destructive);
       }
+
+      .why-panel-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: var(--radius);
+        border: 1px solid var(--primary);
+        background: rgba(0, 102, 204, 0.06);
+        color: var(--primary);
+        font-size: 14px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background-color 0.15s;
+        margin-bottom: 0;
+      }
+      .why-panel-toggle:hover {
+        background: rgba(0, 102, 204, 0.12);
+      }
+      .why-panel-toggle svg {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s;
+      }
+      .why-panel-toggle.open svg {
+        transform: rotate(90deg);
+      }
+      .why-panel {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+        margin-top: 0;
+      }
+      .why-panel.open {
+        max-height: 3000px;
+        opacity: 1;
+        margin-top: 16px;
+      }
+      .why-panel-content {
+        padding: 24px;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+      }
+      .why-panel-content h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--foreground);
+      }
+      .why-panel-content h4 {
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 16px;
+        margin-bottom: 4px;
+        color: var(--foreground);
+      }
+      .why-panel-content p {
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--muted-foreground);
+        margin-bottom: 8px;
+      }
+      .why-panel-content .why-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      @media (min-width: 768px) {
+        .why-panel-content .why-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .why-card {
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--background);
+      }
+      .why-card-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--foreground);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .why-card-title svg {
+        width: 14px;
+        height: 14px;
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+      .why-card p {
+        font-size: 13px;
+        margin-bottom: 0;
+      }
+      .why-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 20px 0;
+      }
+      .why-panel-content .why-bottom {
+        font-size: 13px;
+        font-style: italic;
+        color: var(--muted-foreground);
+        margin-bottom: 0;
+      }
+
+      .section-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: var(--radius);
+        background: rgba(0, 102, 204, 0.05);
+        border: 1px solid rgba(0, 102, 204, 0.12);
+        margin-bottom: 16px;
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        padding: 0 14px;
+        margin-bottom: 0;
+        border-width: 0;
+        transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease, margin 0.3s ease, border-width 0.3s ease;
+      }
+      .section-hint.visible {
+        max-height: 200px;
+        opacity: 1;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        border-width: 1px;
+      }
+      .section-hint svg {
+        width: 14px;
+        height: 14px;
+        color: var(--primary);
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .section-hint p {
+        font-size: 13px;
+        color: var(--muted-foreground);
+        line-height: 1.5;
+      }
+      .section-hint strong {
+        color: var(--foreground);
+        font-weight: 500;
+      }
+      .hint-toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .hint-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0;
+        border: none;
+        background: none;
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.15s;
+      }
+      .hint-toggle-btn:hover {
+        opacity: 1;
+      }
+      .hint-toggle-btn svg {
+        width: 13px;
+        height: 13px;
+      }
     </style>
   </head>
   <body>
@@ -569,36 +750,102 @@
           <h1>Data to Plain Language Clipboard</h1>
         </div>
         <p class="subtitle">
-          Turn structured data into plain-language statements with sources.
-          Export as RTF, CSV, or PROV-O JSON-LD.
+          Turns a table row or graph link into plain language. Collect multiple sets of data without leaving the PAI/CAI tool, then export into common universal formats: import into word processors (with proper footnotes), spreadsheet tables, knowledge graphs, link analysis tools, and the W3C standard for provenance ontology (keeps sourcing when importing into big data).
         </p>
+        <div style="margin-top: 16px;">
+          <button class="why-panel-toggle" id="whyToggleBtn" data-testid="button-why-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+            Why This Exists
+          </button>
+          <div class="why-panel" id="whyPanel">
+            <div class="why-panel-content">
+              <h3>The Problem This Solves</h3>
+              <p>PAI and CAI tools surface structured data — names, roles, organizations, accounts, transactions, phone numbers, sources. But there is a gap between the way something is displayed on a user's screen and what's useful to end users. The most common gap: turning CAI into plain-language text with proper attribution.</p>
+              <p><strong>That gap is filled every day by humans retyping information they are already looking at on a screen.</strong></p>
+
+              <div class="why-grid">
+                <div class="why-card">
+                  <div class="why-card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    The Retyping Tax
+                  </div>
+                  <p>Hundreds of workflows per day, each requiring manual retyping. Every retype is a chance for misspelled names, transposed numbers, and misattributed roles. Quiet errors that propagate downstream.</p>
+                </div>
+
+                <div class="why-card">
+                  <div class="why-card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    The Screenshot Problem
+                  </div>
+                  <p>Screenshots turn usable data into pictures. Pictures cannot be searched, copied, parsed, or validated. Anyone downstream has to retype from the image. The error chain starts again.</p>
+                </div>
+
+                <div class="why-card">
+                  <div class="why-card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    Split-Screen Context Switching
+                  </div>
+                  <p>When the tool does not export well, users split their screen between the tool, a report, a spreadsheet, and email. Every window switch is a chance to paste the wrong value in the wrong place.</p>
+                </div>
+
+                <div class="why-card">
+                  <div class="why-card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Footnotes Do Not Survive Copy-Paste
+                  </div>
+                  <p>HTML footnotes are stripped when copying to Word. Zero chance of preserving citations through the clipboard. Every source has to be manually reconstructed. Every time.</p>
+                </div>
+
+                <div class="why-card">
+                  <div class="why-card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18M9 4v16M15 4v16"/></svg>
+                    Cutting Tables Into Documents
+                  </div>
+                  <p>Users copy whole tables to get one row. Then delete the extra headers, columns, and formatting. This is work the tool should have done — offer the data as a sentence, not a table to reshape.</p>
+                </div>
+
+                <div class="why-card">
+                  <div class="why-card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    The Misery Scales With Utility
+                  </div>
+                  <p>The better the tool, the more it gets used. The more it gets used, the more retyping, screenshots, and reformatting. The most valuable tools create the most export friction.</p>
+                </div>
+              </div>
+
+              <hr class="why-divider"/>
+
+              <h4>No One Can Predict What the End User Wants</h4>
+              <p>The person in the tool is rarely the final consumer. Some downstream readers want sentences. Others want spreadsheets, graphs, footnotes, or no citations at all. One clipboard with multiple export formats lets users pick the right output without reformatting.</p>
+
+              <h4>Why Not Use Generative AI?</h4>
+              <p>Putting a variable into a sentence is the second thing someone learns when coding. It is deterministic, instant, free, and cannot hallucinate. Generative AI is expensive, adds latency, and occasionally wrong — for a task that is literally string concatenation.</p>
+
+              <h4>Why This Costs Almost Nothing</h4>
+              <p>The sentence assembly runs entirely in the user's browser (front end). No server calls, no API traffic, no database queries. The provider's infrastructure is not involved. It scales to any number of users at near-zero marginal cost.</p>
+
+              <p class="why-bottom">If you are going to let users copy one thing, let them copy many things. That is what turns a convenience feature into a workflow tool.</p>
+            </div>
+          </div>
+        </div>
       </header>
 
       <section>
-        <h2 class="section-title">Add New Statement</h2>
+        <div class="hint-toggle-row">
+          <h2 class="section-title" style="margin-bottom: 0;">Add New Statement</h2>
+          <button class="hint-toggle-btn" data-hint="hint-section1" data-testid="button-hint-section1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            What this demonstrates
+          </button>
+        </div>
+        <div class="section-hint" id="hint-section1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>This section simulates data in a CAI system in a table or graph.</strong> The way most data is displayed on screen. "Fill and Display" creates sample data. "Manually Enter" lets you put your own data in.</p>
+        </div>
         <form id="entryForm">
           <div class="section-actions">
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="fillAndClipBtn"
-              data-testid="button-fill-and-clip"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-              Fill and Clip
-            </button>
             <button
               type="button"
               class="btn btn-outline"
@@ -690,8 +937,18 @@
       </section>
 
       <section>
-        <h2 class="section-title">Existing Display</h2>
-        <div class="section-collapsible" id="existingDisplayCollapsible">
+        <div class="hint-toggle-row">
+          <h2 class="section-title" style="margin-bottom: 0;">Existing Display</h2>
+          <button class="hint-toggle-btn" data-hint="hint-section2" data-testid="button-hint-section2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            What this demonstrates
+          </button>
+        </div>
+        <div class="section-hint" id="hint-section2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>Same data, two views.</strong> The table shows compact relationship codes (CTO, INVESTOR) for scanning. The graph shows the same data as connected nodes. Both use relationship codes for clarity. Toggle between them to see how one structured entry supports both tabular and graph representations — no additional processing.</p>
+        </div>
+        <div id="existingDisplayCollapsible">
           <div class="cite-toggle" id="inputPreviewToggle" data-testid="toggle-input-preview">
             <button class="active" data-mode="table" data-testid="button-input-table">
               Table
@@ -755,7 +1012,17 @@
       </section>
 
       <section>
-        <h2 class="section-title">Output Preview</h2>
+        <div class="hint-toggle-row">
+          <h2 class="section-title" style="margin-bottom: 0;">Output Preview</h2>
+          <button class="hint-toggle-btn" data-hint="hint-section3" data-testid="button-hint-section3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            What this demonstrates
+          </button>
+        </div>
+        <div class="section-hint" id="hint-section3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>One clipboard, five export formats.</strong> Statements accumulate here using full predicate text — readable sentences, not codes. Toggle between citation modes (footnote, in-text, none, graph). Export as plain text copy, RTF with real Word footnotes, flat CSV, graph-ready node/edge CSV, or W3C PROV-O JSON-LD. The user never reformats — they pick the right output for their audience.</p>
+        </div>
         <div class="cite-toggle" id="citeToggle" data-testid="toggle-citation">
           <button
             class="active"
@@ -933,7 +1200,23 @@
       let citeMode = "none";
       let inputPreviewMode = "table";
       let manualExpanded = false;
-      let section2Expanded = false;
+
+      var whyToggleBtn = document.getElementById("whyToggleBtn");
+      var whyPanel = document.getElementById("whyPanel");
+      whyToggleBtn.addEventListener("click", function () {
+        var isOpen = whyPanel.classList.toggle("open");
+        whyToggleBtn.classList.toggle("open", isOpen);
+      });
+
+      document.querySelectorAll(".hint-toggle-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var hintId = btn.getAttribute("data-hint");
+          var hint = document.getElementById(hintId);
+          if (hint) {
+            hint.classList.toggle("visible");
+          }
+        });
+      });
 
       const form = document.getElementById("entryForm");
       const emptyState = document.getElementById("emptyState");
@@ -949,7 +1232,6 @@
       const csvSingleBtn = document.getElementById("csvSingleBtn");
       const csvNodeEdgeBtn = document.getElementById("csvNodeEdgeBtn");
       const provBtn = document.getElementById("provBtn");
-      const fillAndClipBtn = document.getElementById("fillAndClipBtn");
       const randomBtn = document.getElementById("randomBtn");
       const manualEntryBtn = document.getElementById("manualEntryBtn");
       const addToClipboardBtn = document.getElementById("addToClipboardBtn");
@@ -1055,18 +1337,10 @@
         renderOutput();
       });
 
-      function expandSection2() {
-        if (!section2Expanded) {
-          section2Expanded = true;
-          existingDisplayCollapsible.classList.add("expanded");
-        }
-      }
-
       manualEntryBtn.addEventListener("click", function () {
         manualExpanded = !manualExpanded;
         if (manualExpanded) {
           formFieldsCollapsible.classList.add("expanded");
-          expandSection2();
         } else {
           formFieldsCollapsible.classList.remove("expanded");
         }
@@ -1288,39 +1562,12 @@
         showToast("Entry removed");
       }
 
-      fillAndClipBtn.addEventListener("click", function () {
-        var rel = pickRandom(relationships);
-        var subject = pickRandom(subjects);
-        var predicate = rel.predicate;
-        var object = pickRandom(objects);
-        var source = pickRandom(sources);
-        entries.push({
-          subject: subject,
-          predicate: predicate,
-          object: object,
-          source: source,
-        });
-        if (manualExpanded) {
-          manualExpanded = false;
-          formFieldsCollapsible.classList.remove("expanded");
-        }
-        if (section2Expanded) {
-          section2Expanded = false;
-          existingDisplayCollapsible.classList.remove("expanded");
-        }
-        form.reset();
-        renderInputPreview();
-        renderOutput();
-        showToast("Entry added");
-      });
-
       randomBtn.addEventListener("click", function () {
         var rel = pickRandom(relationships);
         subjectInput.value = pickRandom(subjects);
         predicateInput.value = rel.predicate;
         objectInput.value = pickRandom(objects);
         sourceInput.value = pickRandom(sources);
-        expandSection2();
         renderInputPreview();
       });
 

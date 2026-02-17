@@ -1,4 +1,4 @@
-# Click here for demo: [Data to Plain Language Clipboard](https://openresearchcommunicationsystem.github.io/Proof-of-Concept-Data-to-Plain-Language-Clip-Board/)
+# [For Data to Plain Language Clipboard Demo Click Here](https://openresearchcommunicationsystem.github.io/Proof-of-Concept-Data-to-Plain-Language-Clip-Board/)
 
 
 ## What This Proof of Concept Demonstrates

@@ -1,5 +1,3 @@
-Mission: To present practical, open-source proofs of concept that address common challenges in OSINT, PAI, and CAI workflows — empowering stakeholders to develop tailored requirements and solutions.
-
 ## What This Proof of Concept Demonstrates
 
 | What it shows                                                      | Why it matters                                                                  |
@@ -16,9 +14,11 @@ Mission: To present practical, open-source proofs of concept that address common
 
 The concept is simple. The implementation is straightforward. The value compounds across every user, every workflow, every day.
 
-The question is not whether this is hard to build. It is not. The question is how much productivity and accuracy is being lost every day because no one has built it yet.
-
 To use this go to: [Data to Plain Language Clipboard](https://openresearchcommunicationsystem.github.io/Proof-of-Concept-Data-to-Plain-Language-Clip-Board/)
+
+### About ORCS
+
+Mission: To present practical, open-source proofs of concept that address common challenges in OSINT, PAI, and CAI workflows — empowering stakeholders to develop tailored requirements and solutions.
 
 GitHub: [ORCS GitHub](https://github.com/OpenResearchCommunicationSystem)
 
@@ -32,7 +32,7 @@ Other Active Proof's of concept
 
 
 
-
+TLDR: 
 
 
 ## The Problem Nobody Talks About

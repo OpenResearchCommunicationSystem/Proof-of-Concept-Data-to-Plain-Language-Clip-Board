@@ -1,3 +1,6 @@
+# Click here for demo: [Data to Plain Language Clipboard](https://openresearchcommunicationsystem.github.io/Proof-of-Concept-Data-to-Plain-Language-Clip-Board/)
+
+
 ## What This Proof of Concept Demonstrates
 
 | What it shows                                                      | Why it matters                                                                  |
@@ -14,7 +17,7 @@
 
 The concept is simple. The implementation is straightforward. The value compounds across every user, every workflow, every day.
 
-To use this go to: [Data to Plain Language Clipboard](https://openresearchcommunicationsystem.github.io/Proof-of-Concept-Data-to-Plain-Language-Clip-Board/)
+
 
 ### About ORCS
 

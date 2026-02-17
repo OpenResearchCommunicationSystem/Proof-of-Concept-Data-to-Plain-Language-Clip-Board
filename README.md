@@ -1,5 +1,22 @@
 Mission: To present practical, open-source proofs of concept that address common challenges in OSINT, PAI, and CAI workflows — empowering stakeholders to develop tailored requirements and solutions.
 
+## What This Proof of Concept Demonstrates
+
+| What it shows                                                      | Why it matters                                                                  |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| Data entered once, exported in five formats                        | Users stop reformatting the same information for different audiences            |
+| Runs entirely in the browser                                       | Near-zero cost to the provider, instant performance, no data leaves the machine |
+| Real footnotes (rich text file)                                    | Solves a problem that copy-paste from HTML cannot                               |
+| Changes between Data (relationship) and Plain Language (Predicate) | Right presentation for each context, no manual conversion                       |
+| Deterministic code, no generative AI                               | Cheaper, faster, more reliable, no hallucination risk                           |
+| One clipboard, multiple entries                                    | Users stay in the tool instead of exporting one item at a time                  |
+| Graph Friendly CSV export (Node/Edge)                              | Data is graph-ready without manual restructuring                                |
+| World Wide Web Standard Provence (PROV-O JSON-LD)                  | Future-forward provenance tracking using a recognized standard                  |
+| Demo is a Single Web Page File with no dependances                 | Can be hosted anywhere, works offline, no build tools required                  |
+
+The concept is simple. The implementation is straightforward. The value compounds across every user, every workflow, every day.
+
+The question is not whether this is hard to build. It is not. The question is how much productivity and accuracy is being lost every day because no one has built it yet.
 
 To use this go to: [Data to Plain Language Clipboard](https://openresearchcommunicationsystem.github.io/Proof-of-Concept-Data-to-Plain-Language-Clip-Board/)
 
@@ -311,21 +328,4 @@ Most users will never directly consume a PROV-O file. But this export sets up se
 By including this export in a proof of concept, we demonstrate that structured data with provenance can be a first-class output — not an afterthought bolted on later.
 
 
-## What This Proof of Concept Demonstrates
-
-| What it shows                                                      | Why it matters                                                                  |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| Data entered once, exported in five formats                        | Users stop reformatting the same information for different audiences            |
-| Runs entirely in the browser                                       | Near-zero cost to the provider, instant performance, no data leaves the machine |
-| Real footnotes (rich text file)                                    | Solves a problem that copy-paste from HTML cannot                               |
-| Changes between Data (relationship) and Plain Language (Predicate) | Right presentation for each context, no manual conversion                       |
-| Deterministic code, no generative AI                               | Cheaper, faster, more reliable, no hallucination risk                           |
-| One clipboard, multiple entries                                    | Users stay in the tool instead of exporting one item at a time                  |
-| Graph Friendly CSV export (Node/Edge)                              | Data is graph-ready without manual restructuring                                |
-| World Wide Web Standard Provence (PROV-O JSON-LD)                  | Future-forward provenance tracking using a recognized standard                  |
-| Demo is a Single Web Page File with no dependances                 | Can be hosted anywhere, works offline, no build tools required                  |
-
-The concept is simple. The implementation is straightforward. The value compounds across every user, every workflow, every day.
-
-The question is not whether this is hard to build. It is not. The question is how much productivity and accuracy is being lost every day because no one has built it yet.
 

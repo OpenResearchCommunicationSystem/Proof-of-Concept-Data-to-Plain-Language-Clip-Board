@@ -165,81 +165,124 @@ Most users will never directly consume a PROV-O file. But this export sets up se
 By including this export in a proof of concept, we demonstrate that structured data with provenance can be a first-class output — not an afterthought bolted on later.
 
 
-## The Problem Nobody Talks About
+## What This Proof of Concept Solves
 
-Public Available Information (PAI) and Commercial Aggregated Information (CAI) tools are powerful. They surface structured data — names, roles, organizations, connections, timelines — from vast amounts of information. But there is a gap between what these tools *produce* and what the people downstream actually *need*.
+#### Four Stakeholders, Almost Never in the Same Room
 
-That gap is filled, every single day, by humans retyping information they are already looking at.
+Every tool in this space sits at the intersection of four groups:
 
-## What Happens When Humans Retype Data
+|Stakeholder|Role|What they care about|
+|---|---|---|
+|**Provider**|Vendor or government developer who builds the tool|Cost per user, feature adoption, platform stability|
+|**User**|Analyst or operator who runs the tool day to day|Speed, accuracy, not having to fight the interface|
+|**End User**|Ultimate consumer of the output (manager, executive, attorney, partner agency)|Readable, correctly formatted, properly sourced product|
+|**Sponsor**|The person or office paying for the tool|Return on investment, measurable productivity, reduced risk|
 
-### The Retyping Tax
+These four almost never sit in the same meeting. The Provider builds what they think the User needs. The User reformats for what they think the End User wants. The Sponsor pays for a pipeline that nobody sees end to end. And the End User receives whatever survived the chain — often with errors introduced at every handoff.
 
-A user finds what they need in a PAI tool. It's sitting right there on screen — a name, a role, an organization, a source. Now they need to put it into a report, a briefing, an email, a slide deck.
+Most of the problems below exist in the gap between these four groups.
+
+---
+
+#### Broad Problems
+
+**Human Error Cascade (Error Virus)**
+
+When a user retypes a name, a number, or a source, and gets it wrong, that error does not stay in one place. It copies forward. It goes into a report, gets cited in a briefing, enters a database, and becomes the basis for decisions downstream. Each copy is a new host. Nobody traces it back to the original retype. The error propagates silently through every product, every consumer, every handoff — like a virus with no symptoms until the damage is done.
+
+The more people who touch the data, the more copies of the error exist. The more copies exist, the harder it is to find and fix the original. Structured export — where the data moves without being retyped — eliminates the entry point.
+
+**Utility-Misery Scaling Paradox**
+
+The better the tool, the worse this problem gets. A tool that surfaces valuable information gets used more. More use means more workflows. More workflows means more retyping, more screenshots, more reformatting, more split-screening. The most valuable tools in the organization create the most export friction.
+
+Every Provider should be asking: if a User finds something valuable in our tool, how many steps does it take to get that value into the format the End User actually needs? If the answer is more than one, the tool's utility is generating proportional misery.
+
+**End Use Assumption Error**
+
+The Provider builds the export they think the User needs. The User reformats for the audience they think is reading. Neither one asked the End User. And even if they did, the End User often does not know what format they need until they try to use the data.
+
+Some End Users want sentences for a briefing. Others want a spreadsheet to pivot. Others want a graph for link analysis. Others want proper footnotes for a legal filing. Others want no citations at all.
+
+If the tool only exports in one format, the User has to manually reformat for every audience. If the tool offers a clipboard with multiple export options, the User picks the right format and moves on. The End Use Assumption Error disappears — not because anyone predicted the right format, but because the tool stopped forcing a single prediction.
+
+**User's Leaving the Solution**
+
+When a tool does not export well, the User leaves. Not permanently — they leave the window. They open Word. They open Excel. They open email. They start a new browser tab. They split their screen. They alt-tab between four windows.
+
+Every departure from the tool is a context switch. Every context switch is a chance for error. And every minute spent outside the tool is a minute the tool's metrics do not capture. The Sponsor sees low engagement and wonders why. The Provider sees short session times and assumes the feature is not popular. In reality, the User is doing the tool's job somewhere else.
+
+If the tool gave them a way to collect, review, and export without leaving, they would stay. Keeping the User inside the solution is not a convenience — it is an accuracy strategy.
+
+**Shopping with No Shopping Cart**
+
+Most tools that offer any clipboard functionality limit it to a single item. Copy one result. Paste it. Go back to the tool. Copy the next one. Paste it somewhere else. Repeat.
+
+This is shopping without a shopping cart. The User finds what they need, but they can only carry one item at a time. Every round trip between the tool and the destination is wasted motion. Every re-entry into the tool is a chance to lose their place, duplicate work, or miss an item.
+
+If you are going to let Users copy one thing, let them copy many things. Let them accumulate. Let them review. Let them export everything at once in the format they need. That is what turns a convenience feature into a workflow tool.
+
+---
+
+#### Specific Problems
+
+**The Retyping Tax**
+
+A User finds what they need in a PAI tool. It is sitting right there on screen — a name, a role, an organization, a source. Now they need to put it into a report, a briefing, an email, a slide deck.
 
 So they start typing. By hand. From one window into another.
 
-This is not a rare event. A single analyst may run hundreds or thousands of workflows per day. Each one produces data that has to go somewhere. Even if the retyping only takes a few seconds each time, multiply that across an entire team, across every workflow, across every day. That is not a minor inefficiency. It is an operational burden that scales with every user and every use case.
+This is not a rare event. A single User may run hundreds or thousands of workflows per day. Each one produces data that has to go somewhere. Even if the retyping only takes a few seconds each time, multiply that across an entire team, across every workflow, across every day. That is not a minor inefficiency. It is an operational burden that scales with every User and every use case.
 
 Every time a human retypes something, there is a chance they get it wrong. A misspelled name. A transposed number. A role attributed to the wrong person. These are not dramatic failures — they are quiet ones. They slip through review. They propagate into downstream products. They erode trust in the output.
 
-### The Screenshot Problem
+**The Screenshot Problem**
 
-When retyping feels too slow or too risky, users do something worse: they take a screenshot.
+When retyping feels too slow or too risky, Users do something worse: they take a screenshot.
 
-A screenshot converts usable data and text into a picture. That picture cannot be searched. It cannot be copied. It cannot be parsed, validated, or automatically formatted. If anyone downstream needs to actually *use* that information — in a database, a report, a spreadsheet — they have to retype it from the image. The error chain starts again.
+A screenshot converts usable data and text into a picture. That picture cannot be searched. It cannot be copied. It cannot be parsed, validated, or automatically formatted. If anyone downstream needs to actually _use_ that information — in a database, a report, a spreadsheet — they have to retype it from the image. The error chain starts again.
 
-Screenshots are a symptom. They tell you that the tool did not give the user a good way to get information out.
+Screenshots are a symptom. They tell you that the tool did not give the User a good way to get information out.
 
-Users should never have to screenshot data or text. It is unprofessional, it destroys machine-readability, and it creates exactly the kind of error cascade that structured tools are supposed to prevent.
+Users should never have to screenshot data or text. It destroys machine-readability and creates exactly the kind of error cascade that structured tools are supposed to prevent.
 
-### Split-Screening and Context Switching
-
-When users cannot get data out of a tool in a useful format, they split their screen. One window has the PAI tool. Another has the report. Another has a spreadsheet. Maybe another has an email.
-
-Every time the user switches windows, they lose focus. Every switch introduces a chance to copy the wrong value, paste into the wrong cell, or simply lose track of where they were. The tool that was supposed to make them faster is now the reason they are slow.
-
-If the tool had given them a clipboard — a simple way to collect and export structured information — they would never have to leave.
-
-### The Footnote Problem
+**Fubar Footnotes**
 
 Try this: find a piece of information on a web page that includes a source citation. Copy it. Paste it into Microsoft Word.
 
 The footnote is gone.
 
-HTML footnotes do not survive the clipboard. They are rendered by the browser, but when you copy text from a web page, the footnote markers and the footnote content are stripped. The user gets the text without the attribution.
+HTML footnotes do not survive the clipboard. They are rendered by the browser, but when you copy text from a web page, the footnote markers and the footnote content are stripped. The User gets the text without the attribution.
 
 For anyone working in a field where source attribution matters — intelligence analysis, legal research, journalism, due diligence — this is not a minor inconvenience. It means that every single citation has to be manually reconstructed after pasting. For every piece of information. Every time.
 
-There is zero chance of a copy from HTML preserving footnotes in a word processor. Zero.
+There is zero chance of a copy from HTML preserving footnotes in a word processor. Zero. The format simply does not support it through the clipboard. The only way to get real footnotes into a word processor is to generate the word processor's native format directly — which is exactly what this proof of concept does with RTF.
 
-### Cutting Tables Into Documents
+**HTML Terrible Tables**
 
-Users often need one or two rows from a table. But when they copy from a table, they get the whole table — headers, extra columns, formatting artifacts. Then they have to paste it into a document and manually delete everything they do not need. They reshape the table into text. They reformat. They clean up.
+Users often need one or two rows from a table. But when they copy from an HTML table, they get the whole table — headers, extra columns, formatting artifacts, merged cells that paste as blank spaces. Then they have to paste it into a document and manually delete everything they do not need. They reshape the table into text. They reformat. They clean up.
 
-This is work the tool should have done. If the tool offered the data as a sentence — "Amara Okafor is the former CEO of Helios Dynamics (Source: Corporate Filing, 2024)" — the user would copy one line and move on.
+This is work the tool should have done. If the tool offered the data as a sentence — "Amara Okafor is the former CEO of Helios Dynamics (Source: Corporate Filing, 2024)" — the User would copy one line and move on. Instead, they are spending time surgically extracting data from a table that was designed for display, not for export.
 
-### No one Can Predict What the End User Wants (including the End User)
+HTML tables are optimized for the browser. They are not optimized for the clipboard.
 
-Here is a reality that tools rarely account for: the person using the PAI tool is usually not the final consumer of the information.
+**Split-Screening and Context Switching**
 
-An analyst runs the query. But the briefing goes to a manager. The report goes to an executive. The data goes into a product that someone else reads. Each of those downstream consumers has different needs — some want sentences, some want spreadsheets, some want graphs, some want footnotes, some want no citations at all.
+When Users cannot get data out of a tool in a useful format, they split their screen. One window has the PAI tool. Another has the report. Another has a spreadsheet. Maybe another has an email.
 
-If the tool only exports in one format, the user has to manually reformat for every audience. If the tool offers a clipboard with multiple export options — plain text, RTF with footnotes, CSV for spreadsheets, graph-ready node/edge tables — the user picks the right format and moves on.
+Every time the User switches windows, they lose focus. Every switch introduces a chance to copy the wrong value, paste into the wrong cell, or simply lose track of where they were. The tool that was supposed to make them faster is now the reason they are slow.
 
-### The Misery Scales With Utility
+If the tool had given them a clipboard — a simple way to collect and export structured information — they would never have to leave.
 
-This is the cruel irony: the better the PAI tool is, the worse this problem gets.
+**Third Party Converter Slow Down**
 
-A tool that surfaces valuable information gets used more often. More use means more workflows. More workflows means more retyping, more screenshots, more split-screening, more manual reformatting. The more valuable the tool, the more time users waste fighting its export limitations.
+When the tool's native export does not match what the End User needs, the User reaches for a third-party converter. They export a CSV and open it in Excel to reformat. They paste into a text editor to strip formatting. They use an online converter to turn a table into a different structure. They copy into a slide deck and manually rebuild the layout.
 
-Every provider should be asking: if a user finds something valuable in our tool, how many steps does it take to get that value into the format they actually need?
+Each third-party tool in the chain adds time. Each adds a new error surface — a conversion that strips a leading zero, a date that flips from DD/MM to MM/DD, a unicode character that becomes garbage. Each requires the User to learn and maintain access to another tool. And each one is a step the Provider's tool should have handled.
 
-### If You Let Them Copy One Thing, Let Them Copy Many
+The slowdown is not just the conversion itself. It is the interruption. The User was in flow — finding information, building a picture — and now they are troubleshooting a CSV import in a completely different application. By the time they get back to the analytical tool, they have lost context and momentum.
 
-Most tools that offer any clipboard functionality limit it to a single item. Copy one result. Paste it. Go back. Copy the next one.
-
-If you are going to build a clipboard feature, build one that accumulates. Let the user collect multiple statements, review them, and export them all at once. One clipboard, multiple exports. That is what turns a convenience feature into a workflow tool.
+If the tool exported in the formats the End User actually needs, the third-party converter step disappears entirely.
 
 ---
 
@@ -329,7 +372,6 @@ This mapping is deterministic. It produces the same output every time. It cannot
 
 ---
 
-By including this export in a proof of concept, we demonstrate that structured data with provenance can be a first-class output — not an afterthought bolted on later.
 
 
 
